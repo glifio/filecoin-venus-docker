@@ -10,7 +10,6 @@ RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
 ENV SRC_DIR /go/src/github.com/filecoin-project/venus
 ENV GO111MODULE on
 ENV GOPROXY https://goproxy.io
-ARG FIL_PROOFS_PARAMETER_CACHE="./tmp/filecoin-proof-parameters"
 ARG FILECOIN_USE_PRECOMPILED_RUST_PROOFS=yes
 ARG FILECOIN_USE_PRECOMPILED_BLS_SIGNATURES=yes
 
@@ -42,7 +41,6 @@ MAINTAINER 1679_DEV@altoros.com
 
 # Get the filecoin binary, entrypoint script, and TLS CAs from the build container.
 ENV SRC_DIR /go/src/github.com/filecoin-project/venus
-COPY --from=builder $SRC_DIR/tmp/filecoin-proof-parameters/* /tmp/filecoin-proof-parameters/
 COPY --from=builder $SRC_DIR/venus /usr/local/bin/venus
 COPY --from=builder $SRC_DIR/bin/container_daemon /usr/local/bin/start_filecoin
 COPY --from=builder $SRC_DIR/bin/devnet_start /usr/local/bin/devnet_start
