@@ -14,8 +14,8 @@ ARG FIL_PROOFS_PARAMETER_CACHE="./tmp/filecoin-proof-parameters"
 ARG FILECOIN_USE_PRECOMPILED_RUST_PROOFS=yes
 ARG FILECOIN_USE_PRECOMPILED_BLS_SIGNATURES=yes
 
-RUN git clone https://github.com/filecoin-project/venus.git --depth 1 --branch $BRANCH \
-  && cd venus \
+RUN git clone https://github.com/filecoin-project/venus.git $SRC_DIR --depth 1 --branch $BRANCH \
+  && cd $SRC_DIR \
   && . $HOME/.cargo/env \
   && git submodule update --init --recursive \
   && go run ./build/*go smartdeps \
