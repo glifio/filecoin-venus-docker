@@ -4,7 +4,7 @@ FROM golang:1.16.7-stretch AS builder
 ARG BRANCH
 MAINTAINER 1679_DEV@altoros.com
 
-RUN apt-get update && apt-get install -y ca-certificates file sudo clang jq
+RUN apt-get update && apt-get install -y ca-certificates file sudo clang jq libhwloc-dev ocl-icd-opencl-dev mesa-opencl-icd
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
 
 ENV SRC_DIR /go/src/github.com/filecoin-project/venus
