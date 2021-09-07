@@ -1,6 +1,7 @@
 # Adopted from https://raw.githubusercontent.com/filecoin-project/venus/master/.docker/Dockerfile
 
 FROM golang:1.16.7-stretch AS builder
+ARG BRANCH
 MAINTAINER 1679_DEV@altoros.com
 
 RUN apt-get update && apt-get install -y ca-certificates file sudo clang jq
