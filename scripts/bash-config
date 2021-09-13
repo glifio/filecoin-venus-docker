@@ -1,0 +1,47 @@
+#set -o nounset \
+#    -o errexit
+set -e
+
+function show_env {
+    env | sort | grep INFRA
+}
+
+function check.venus_home_dir() {
+  if [[ -z "$INFRA_VENUS_HOME" ]]; then
+    echo "INFRA_VENUS_HOME not defined. Please setting up ..."
+    exit 1
+  fi
+
+}
+
+function prepare_config {
+  if [ -f "$INFRA_VENUS_HOME/config.json" ]; then
+      if [ ! -d "$INFRA_VENUS_HOME/.venus" ]; then
+        mkdir "$INFRA_VENUS_HOME/.venus" && \
+        cp "$INFRA_VENUS_HOME/config.json" "$INFRA_VENUS_HOME/.venus/config.json"
+      else
+        cp "$INFRA_VENUS_HOME/config.json" "$INFRA_VENUS_HOME/.venus/config.json"
+      fi
+  fi
+}
+
+function key_permissions {
+  # make sure key/token permissions are correct
+  if [ -d "$INFRA_VENUS_HOME/.venus/keystore" ]; then
+      find "$INFRA_VENUS_HOME/.venus/keystore/" -type f -exec chmod 600 {} \;
+  fi
+  if [ -f "$INFRA_VENUS_HOME/.venus/token" ]; then
+      chmod -f 600 "$INFRA_VENUS_HOME/.venus/token"
+  fi
+}
+
+function keys_management() {
+  mkdir -p "$INFRA_VENUS_HOME/.venus/keystore";
+  if [[ $INFRA_PERSISTNODEID = true ]]; then
+    cp /keystore/nodeid "$INFRA_VENUS_HOME/.venus/keystore/NRUWE4BSOAWWQ33TOQ";
+  else
+    rm -f "$INFRA_VENUS_HOME/.venus/keystore/NRUWE4BSOAWWQ33TOQ";
+  fi
+  cp /keystore/token "$INFRA_VENUS_HOME/.venus/token";
+  cp /keystore/privatekey "$INFRA_VENUS_HOME/.venus/keystore/MF2XI2BNNJ3XILLQOJUXMYLUMU";
+}

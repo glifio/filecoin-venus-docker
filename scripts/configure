@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#set -x
+. /etc/venus/docker/bash-config
+
+repeat() { while :; sleep 3; do $@ && return; done }
+
+check_venus_home_dir
+# Delete all data every pod restart
+if [[ -z "$INFRA_CLEAR_RESTART" ]]
+then
+  echo "INFRA_CLEAR_RESTART not defined"
+elif [ "$INFRA_CLEAR_RESTART" = true ]; then
+  echo "I'll remove ALL Venus DATA from $INFRA_VENUS_HOME/.venus/"
+  echo " -------> Removing ... <---------"
+  repeat rm -rf "$INFRA_VENUS_HOME/.venuus/*"
+elif [ "$INFRA_CLEAR_RESTART" = false ]; then
+  echo "INFRA_CLEAR_RESTART disabled."
+fi
+
+if [[ "$INFRA_SECRETVOLUME" = true  ]]; then
+  keys_management
+fi
+
+prepare_config
+## Comment out because I don't know how Venus keys works
+#key_permissions
+
+if [[ -z "$INFRA_IMPORT_SNAPSHOT_FROM_IPFS" ]]
+then
+  echo "INFRA_IMPORT_SNAPSHOT_FROM_IPFS not defined."
+elif [ "$INFRA_IMPORT_SNAPSHOT_FROM_IPFS" = true ]; then
+  echo "Fetching IPFS CID..."
+  CID=$(curl $SNAPSHOT_CID)
+  echo "Fetched. CID is $CID"
+  SNAPSHOTURL="$IPFS_GW/$CID"
+  echo "Full URL to snapshot is $SNAPSHOTURL"
+  INFRA_IMPORT_SNAPSHOT=true
+elif [ "$IMPORT_SNAPSHOT_FROM_IPFS" = false ]; then
+  echo "IMPORT_SNAPSHOT_FROM_IPFS disabled."
+fi
+# INFRA_SYNC was removed because does not exist on Venus

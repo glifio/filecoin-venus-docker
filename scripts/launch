@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+. /etc/venus/docker/bash-config
+
+INFRA_VAR=$(env | grep INFRA_VENUS_)
+
+if [[ -z "$INFRA_VAR" ]] ; then
+  echo "INFRA_VENUS_DAEMON or INFRA_VENUS_GATEWAY aren't defined. Please set up ..."
+## Comment out Gateway, because Venus daemon can't halt after import, and most likely Venus GW has to be launched in the separate pod
+#elif [ "$INFRA_VENUS_GATEWAY" = true ]; then
+#  echo "Starting venus daemon with gateway"
+#  # Start the daemon process with gateway
+#  venus daemon &
+#  sleep 50
+#  while true
+#  do
+#    if  pgrep -f "venus daemon"
+#      then venus-gateway run && break
+#    else
+#      sleep 5
+#    fi
+#  done
+elif [ "$INFRA_VENUS_DAEMON" = true ]; then
+  echo "Starting daemon"
+  # Start the daemon process
+
+  if [ "$INFRA_IMPORT_SNAPSHOT" = true ] ; then
+    echo "Starting import wait"
+    if [ ! -e "$INFRA_VENUS_HOME/.venus/datastore" ]; then
+      venus daemon --import-snapshot $SNAPSHOTURL
+    fi
+  elif [ "$INFRA_IMPORT_SNAPSHOT" = false ] ; then
+    echo "INFRA_IMPORT_SNAPSHOT disabled."
+    venus daemon
+  fi
+
+elif [ "$INFRA_VENUS_DAEMON" = false ]; then
+  echo "DAEMON disabled."
+fi
+

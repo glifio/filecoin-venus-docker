@@ -76,8 +76,7 @@ RUN mkdir -p $FILECOIN_PATH \
 # Important this happens after the USER directive so permission are correct.
 VOLUME $FILECOIN_PATH
 
-# There's an fs-repo, and initializes one if there isn't.
-ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/start_filecoin"]
+COPY config/config.json /home/venus_user/config.json
+COPY scripts/bash-config scripts/configure scripts/run scripts/launch /etc/venus/docker/
 
-# Execute the daemon subcommand by default
-CMD ["daemon"]
+ENTRYPOINT ["/etc/venus/docker/run"]
